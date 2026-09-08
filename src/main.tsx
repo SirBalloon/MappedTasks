@@ -1,9 +1,23 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
-import { router } from './App';
 import { hydrateStore } from './data/persistence';
+import { createBrowserRouter } from 'react-router-dom';
+import { RootLayout } from './routes/RootLayout';
+import { MapView } from './routes/MapView';
+import { TopicView } from './routes/TopicView';
 import './index.css';
+
+export const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <RootLayout />,
+    children: [
+      { index: true, element: <MapView /> },
+      { path: 'topic/:id', element: <TopicView /> },
+    ],
+  },
+]);
 
 void hydrateStore();
 
