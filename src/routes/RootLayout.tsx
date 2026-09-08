@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { useTreeStore } from '../store/treeStore';
 import { downloadJson, exportJson, parseImport } from '../data/transfer';
+import { ViewToggle } from '../components/ViewToggle';
 
 export function RootLayout() {
   const hydrated = useTreeStore((s) => s.hydrated);
@@ -28,6 +29,7 @@ export function RootLayout() {
         <Link to="/" className="font-semibold tracking-tight">
           MappedTasks
         </Link>
+        <ViewToggle />
         <div className="ml-auto flex items-center gap-2 text-sm">
           <button
             type="button"
