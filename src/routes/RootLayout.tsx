@@ -23,7 +23,7 @@ export function RootLayout() {
   };
 
   return (
-    <div className="mx-auto flex min-h-full max-w-3xl flex-col bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
+    <div className="flex min-h-full w-full flex-col bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100">
       <header className="sticky top-0 z-10 flex items-center gap-3 border-b border-slate-200 bg-white/80 px-4 py-3 backdrop-blur dark:border-slate-700 dark:bg-slate-900/80">
         <Link to="/" className="font-semibold tracking-tight">
           MappedTasks
