@@ -1,13 +1,16 @@
+import { useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { useTreeStore } from '../store/treeStore';
 import { ancestorChain, rollup } from '../store/selectors';
 import { TreeList } from '../components/TreeList';
 import { ProgressBar } from '../components/ProgressBar';
+import { InlineInput } from '../components/InlineInput';
 
 export function TopicView() {
   const { id = '' } = useParams();
   const nodes = useTreeStore((s) => s.nodes);
   const addNode = useTreeStore((s) => s.addNode);
+  const [adding, setAdding] = useState(false);
 
   const node = nodes[id];
   if (!node) return <Navigate to="/" replace />;
@@ -36,16 +39,23 @@ export function TopicView() {
         <ProgressBar ratio={r.ratio} label={`${r.doneLeaves}/${r.leaves}`} />
       </header>
 
-      <button
-        type="button"
-        onClick={() => {
-          const t = window.prompt('New subtask');
-          if (t) addNode({ parentId: id, title: t });
-        }}
-        className="self-start rounded border border-slate-300 px-2.5 py-1 text-sm hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-800"
-      >
-        + Subtask
-      </button>
+      {adding ? (
+        <InlineInput
+          label="New subtask"
+          placeholder="New subtask"
+          keepOpen
+          onCommit={(title) => addNode({ parentId: id, title })}
+          onCancel={() => setAdding(false)}
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setAdding(true)}
+          className="self-start rounded border border-slate-300 px-2.5 py-1 text-sm hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-800"
+        >
+          + Subtask
+        </button>
+      )}
 
       <TreeList parentId={id} />
     </div>
