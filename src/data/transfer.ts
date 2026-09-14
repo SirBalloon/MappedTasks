@@ -1,3 +1,4 @@
+import { ZodError } from 'zod';
 import type { NodeId, TaskNode } from '../types';
 import { TREE_DOC_VERSION, treeDocSchema, type TreeDoc } from './schema';
 
@@ -18,6 +19,23 @@ export function exportJson(nodes: Record<NodeId, TaskNode>): string {
 export function parseImport(text: string): TaskNode[] {
   const doc = treeDocSchema.parse(JSON.parse(text));
   return doc.nodes;
+}
+
+/**
+ * Turn whatever `parseImport` threw into one line a person can act on. A raw
+ * ZodError stringifies to a wall of JSON, which was tolerable in an alert() and
+ * is not in a toast.
+ */
+export function importErrorMessage(err: unknown): string {
+  if (err instanceof ZodError) {
+    const [first, ...rest] = err.issues;
+    if (!first) return 'Not a valid MappedTasks file.';
+    const where = first.path.join('.') || 'document';
+    const more = rest.length ? ` (+${rest.length} more)` : '';
+    return `Not a valid MappedTasks file — ${where}: ${first.message}${more}`;
+  }
+  if (err instanceof SyntaxError) return 'That file is not valid JSON.';
+  return err instanceof Error ? err.message : String(err);
 }
 
 /** Browser download helper for the toolbar. */
