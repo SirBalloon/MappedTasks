@@ -4,6 +4,7 @@ import { useTreeStore } from '../store/treeStore';
 import { checkState, childrenOf, descendantIds, rollup } from '../store/selectors';
 import { TreeList } from './TreeList';
 import { InlineInput } from './InlineInput';
+import { RowMenu } from './RowMenu';
 import { useConfirm } from './confirmContext';
 
 interface Props {
@@ -97,13 +98,15 @@ export function TreeNodeRow({ id }: Props) {
             </span>
           )}
 
-          <span className="ml-auto flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
-            <label className="text-xs text-slate-400">
+          {/* Hover-reveal only where hover exists; touch screens always see the controls. */}
+          <span className="ml-auto flex items-center gap-1 transition-opacity pointer-coarse:gap-2 pointer-fine:opacity-0 pointer-fine:group-hover:opacity-100 pointer-fine:focus-within:opacity-100">
+            <label className="flex items-center text-xs text-slate-400">
               w
               <select
                 value={node.weight}
                 onChange={(e) => setWeight(id, Number(e.target.value))}
-                className="ml-0.5 rounded border border-slate-200 bg-transparent text-xs dark:border-slate-600"
+                className="ml-0.5 rounded border border-slate-200 bg-transparent text-xs pointer-coarse:min-h-11 pointer-coarse:px-2 dark:border-slate-600"
+                aria-label={`Weight of ${node.title}`}
               >
                 {[0, 1, 2, 3, 4, 5].map((w) => (
                   <option key={w} value={w}>
@@ -115,19 +118,16 @@ export function TreeNodeRow({ id }: Props) {
             <button
               type="button"
               onClick={() => setAdding(true)}
-              className="rounded px-1.5 text-sm text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700"
+              className="rounded px-1.5 text-sm text-slate-500 hover:bg-slate-100 pointer-coarse:min-h-11 pointer-coarse:min-w-11 dark:hover:bg-slate-700"
               title="Add subtask"
+              aria-label={`Add subtask to ${node.title}`}
             >
               +
             </button>
-            <button
-              type="button"
-              onClick={() => void onDelete()}
-              className="rounded px-1.5 text-sm text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-950"
-              title="Delete"
-            >
-              ×
-            </button>
+            <RowMenu
+              label={`More actions for ${node.title}`}
+              items={[{ label: 'Delete', destructive: true, onSelect: () => void onDelete() }]}
+            />
           </span>
         </div>
       )}
