@@ -10,7 +10,9 @@ export function TopicView() {
   const { id = '' } = useParams();
   const nodes = useTreeStore((s) => s.nodes);
   const addNode = useTreeStore((s) => s.addNode);
+  const renameNode = useTreeStore((s) => s.renameNode);
   const [adding, setAdding] = useState(false);
+  const [renaming, setRenaming] = useState(false);
 
   const node = nodes[id];
   if (!node) return <Navigate to="/" replace />;
@@ -35,7 +37,29 @@ export function TopicView() {
       </nav>
 
       <header className="flex flex-col gap-2">
-        <h1 className="text-lg font-semibold tracking-tight">{node.title}</h1>
+        {renaming ? (
+          <InlineInput
+            label="Rename topic"
+            initial={node.title}
+            onCommit={(title) => {
+              renameNode(id, title);
+              setRenaming(false);
+            }}
+            onCancel={() => setRenaming(false)}
+          />
+        ) : (
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg font-semibold tracking-tight">{node.title}</h1>
+            <button
+              type="button"
+              onClick={() => setRenaming(true)}
+              className="rounded px-1.5 text-xs text-slate-400 hover:bg-slate-100 hover:text-slate-600 pointer-coarse:min-h-11 pointer-coarse:px-3 dark:hover:bg-slate-800 dark:hover:text-slate-300"
+              aria-label={`Rename ${node.title}`}
+            >
+              Rename
+            </button>
+          </div>
+        )}
         <ProgressBar ratio={r.ratio} label={`${r.doneLeaves}/${r.leaves}`} />
       </header>
 
