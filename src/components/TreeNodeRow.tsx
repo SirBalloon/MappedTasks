@@ -126,7 +126,10 @@ export function TreeNodeRow({ id }: Props) {
             </button>
             <RowMenu
               label={`More actions for ${node.title}`}
-              items={[{ label: 'Delete', destructive: true, onSelect: () => void onDelete() }]}
+              items={[
+                { label: 'Rename', onSelect: () => setRenaming(true) },
+                { label: 'Delete', destructive: true, onSelect: () => void onDelete() },
+              ]}
             />
           </span>
         </div>
